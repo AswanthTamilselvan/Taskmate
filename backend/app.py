@@ -1,41 +1,65 @@
+
 import os
 from pathlib import Path
+
 import mysql.connector
 from dotenv import load_dotenv
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, session
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
-from flask import Flask, jsonify, request, session
 
+# Load local environment variables from backend/.env
 load_dotenv(Path(__file__).with_name(".env"))
 
 app = Flask(__name__)
-app.secret_key = os.environ["FLASK_SECRET_KEY"]
+
+# Read the secret key from the environment
+secret_key = os.getenv("FLASK_SECRET_KEY")
+if not secret_key:
+    raise RuntimeError("FLASK_SECRET_KEY is not configured")
+
+app.config["SECRET_KEY"] = secret_key
+
+# Use secure cross-site cookies in production over HTTPS
+is_production = (
+    os.getenv("FLASK_ENVIRONMENT", "development").lower()
+    == "production"
+)
+
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
-    SESSION_COOKIE_SAMESITE="Lax",
-    SESSION_COOKIE_SECURE=False,  # Local development only; use True with HTTPS
+    SESSION_COOKIE_SAMESITE="None" if is_production else "Lax",
+    SESSION_COOKIE_SECURE=is_production,
 )
+
+# Local origins by default; configure the deployed frontend in production
+allowed_origins = [
+    origin.strip()
+    for origin in os.getenv(
+        "CORS_ORIGINS",
+        "http://localhost:5173,http://127.0.0.1:5173"
+    ).split(",")
+    if origin.strip()
+]
 
 CORS(
     app,
     supports_credentials=True,
-    origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173"
-    ]
+    origins=allowed_origins,
 )
 
 bcrypt = Bcrypt(app)
 
-def get_db_connection():
 
+def get_db_connection():
     return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password=os.environ.get("MYSQL_PASSWORD", ""),
-        database="taskmate_db"
+        host=os.getenv("MYSQL_HOST", "localhost"),
+        port=int(os.getenv("MYSQL_PORT", "3306")),
+        user=os.getenv("MYSQL_USER", "root"),
+        password=os.getenv("MYSQL_PASSWORD", ""),
+        database=os.getenv("MYSQL_DATABASE", "taskmate_db"),
     )
+
 
 @app.route("/")
 def home():
