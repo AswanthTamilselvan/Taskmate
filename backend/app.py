@@ -51,14 +51,31 @@ CORS(
 bcrypt = Bcrypt(app)
 
 
+
 def get_db_connection():
-    return mysql.connector.connect(
-        host=os.getenv("MYSQL_HOST", "localhost"),
-        port=int(os.getenv("MYSQL_PORT", "3306")),
-        user=os.getenv("MYSQL_USER", "root"),
-        password=os.getenv("MYSQL_PASSWORD", ""),
-        database=os.getenv("MYSQL_DATABASE", "taskmate_db"),
-    )
+    connection_args = {
+        "host": os.getenv("MYSQL_HOST", "localhost"),
+        "port": int(os.getenv("MYSQL_PORT", "3306")),
+        "user": os.getenv("MYSQL_USER", "root"),
+        "password": os.getenv("MYSQL_PASSWORD", ""),
+        "database": os.getenv("MYSQL_DATABASE", "taskmate_db"),
+    }
+
+    # Read the CA certificate path from the environment
+    ssl_ca = os.getenv("MYSQL_SSL_CA")
+
+    # Enable SSL certificate verification if configured
+    if ssl_ca:
+        connection_args.update({
+            "ssl_ca": ssl_ca,
+            "ssl_verify_cert": True,
+            "ssl_verify_identity": True,
+        })
+
+    # Connect to MySQL
+    return mysql.connector.connect(**connection_args)
+
+
 
 
 @app.route("/")
