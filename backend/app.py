@@ -14,7 +14,12 @@ load_dotenv(Path(__file__).with_name(".env"))
 app = Flask(__name__)
 
 # Read the secret key from the environment
+
+# Read the secret key from the environment
+
+# Read the secret key from the environment
 secret_key = os.getenv("FLASK_SECRET_KEY")
+
 if not secret_key:
     raise RuntimeError("FLASK_SECRET_KEY is not configured")
 
@@ -22,9 +27,10 @@ app.config["SECRET_KEY"] = secret_key
 
 # Use secure cross-site cookies in production over HTTPS
 is_production = (
-    os.getenv("FLASK_ENVIRONMENT", "development").lower()
-    == "production"
+    os.getenv("FLASK_ENVIRONMENT") == "production"
 )
+
+
 
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
