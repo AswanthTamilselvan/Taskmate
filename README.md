@@ -1,4 +1,22 @@
 # React + Vite
+# TaskMate — Smart Task Management Web App
+
+A full-stack task management application that helps users organize and track their daily tasks.
+
+**Live Demo:** https://taskmate-tawny.vercel.app
+
+## Features
+- User registration and login
+- Add, edit, and delete tasks
+- Mark tasks as completed
+- Filter tasks by all, pending, and completed
+- User-specific task management
+
+## Tech Stack
+- Frontend: React.js
+- Backend: Python, Flask
+- Database: MySQL
+- Deployment: Vercel and Render
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
