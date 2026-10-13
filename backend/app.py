@@ -34,13 +34,10 @@ app.config.update(
 
 # Local origins by default; configure the deployed frontend in production
 
+
 CORS(
     app,
-    resources={
-        r"/api/*": {
-            "origins": ["https://taskmate-tawny.vercel.app"]
-        }
-    },
+    origins=["https://taskmate-tawny.vercel.app"],
     supports_credentials=True,
 )
 
