@@ -33,20 +33,17 @@ app.config.update(
 )
 
 # Local origins by default; configure the deployed frontend in production
-allowed_origins = [
-    origin.strip()
-    for origin in os.getenv(
-        "CORS_ORIGINS",
-        "http://localhost:5173,http://127.0.0.1:5173"
-    ).split(",")
-    if origin.strip()
-]
 
 CORS(
     app,
+    resources={
+        r"/api/*": {
+            "origins": ["https://taskmate-tawny.vercel.app"]
+        }
+    },
     supports_credentials=True,
-    origins=allowed_origins,
 )
+
 
 bcrypt = Bcrypt(app)
 
