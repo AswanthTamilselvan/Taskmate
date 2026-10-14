@@ -2,8 +2,10 @@
 import { useState, useEffect } from "react";
 import "./index.css";
 
-const API_BASE = "https://taskmate-backend-shki.onrender.com/api";
+
+const API_BASE = "/api";
 const API_URL = `${API_BASE}/tasks`;
+
 
 function App() {
   const [user, setUser] = useState(null);
