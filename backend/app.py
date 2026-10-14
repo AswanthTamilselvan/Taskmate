@@ -1,5 +1,5 @@
-
 import os
+import re
 from pathlib import Path
 
 import mysql.connector
@@ -74,9 +74,6 @@ def get_db_connection():
 
     # Connect to MySQL
     return mysql.connector.connect(**connection_args)
-
-
-
 
 @app.route("/")
 def home():
@@ -285,6 +282,31 @@ def register():
     if len(password) < 8:
         return jsonify({
             "error": "Password must be at least 8 characters"
+        }), 400
+
+    if not re.search(r"[a-z]", password):
+        return jsonify({
+            "error": "Password must contain at least one lowercase letter"
+        }), 400
+
+    if not re.search(r"[A-Z]", password):
+        return jsonify({
+            "error": "Password must contain at least one uppercase letter"
+        }), 400
+
+    if not re.search(r"\d", password):
+        return jsonify({
+            "error": "Password must contain at least one number"
+        }), 400
+
+    if not re.search(r"[^A-Za-z0-9\s]", password):
+        return jsonify({
+            "error": "Password must contain at least one special character"
+        }), 400
+
+    if re.search(r"\s", password):
+        return jsonify({
+            "error": "Password must not contain spaces"
         }), 400
 
     password_hash = bcrypt.generate_password_hash(
