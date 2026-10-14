@@ -90,6 +90,23 @@ function App() {
   // Handle login and registration.
   async function handleAuthSubmit(e) {
     e.preventDefault();
+    
+if (authMode === "register") {
+  const password = authForm.password;
+
+  
+const strongPassword =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9\s])\S{8,}$/;
+
+
+  if (!strongPassword.test(password)) {
+    setAuthError(
+      "Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character."
+    );
+    return;
+  }
+}
+
     setAuthError("");
     setAuthMessage("");
 
@@ -420,6 +437,19 @@ function App() {
                 minLength={8}
                 required
               />
+              {isRegistering && (
+                <div className="password-hint">
+                  <p>Password must contain:</p>
+                  <ul>
+                    <li>At least 8 characters</li>
+                    <li>One uppercase letter (A–Z)</li>
+                    <li>One lowercase letter (a–z)</li>
+                    <li>One number (0–9)</li>
+                    <li>One special character (@, #, !, etc.)</li>
+                    <li>No spaces</li>
+                  </ul>
+                </div>
+              )} 
             </label>
 
             <button
